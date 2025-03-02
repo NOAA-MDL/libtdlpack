@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.18)
 file(STRINGS "VERSION" pVersion)
 
 # Set up the cmake project.
-project(libtdlpack VERSION ${pVersion} LANGUAGES C Fortran)
+project(tdlpack VERSION ${pVersion} LANGUAGES C Fortran)
 
 # Load GNU standard install paths.
 include(GNUInstallDirs)
