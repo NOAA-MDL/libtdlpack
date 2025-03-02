@@ -30,3 +30,6 @@
 *.exe
 *.out
 *.app
+
+# macOS Time Machine indexing files
+*.DS_Store
