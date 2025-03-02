@@ -33,3 +33,6 @@
 
 # macOS Time Machine indexing files
 *.DS_Store
+
+# Ignore build/
+build/
