@@ -1,27 +1,30 @@
-subroutine openfile(kstdout,file,mode,lun,byteorder,ftype,ier,ra_template)
+subroutine open_tdlpack_file(kstdout,file,mode,lun,byteorder,ftype,ier,ra_template) bind(c)
+use iso_c_binding, only: c_int32_t, c_char, c_null_char
+use tdlpack_mod
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer, intent(in) :: kstdout
-character(len=*), intent(in) :: file
-character(len=*), intent(in) :: mode
-integer, intent(inout) :: byteorder
-integer, intent(inout) :: ftype
-integer, intent(out) :: lun
-integer, intent(out) :: ier
-character(len=*), intent(in), optional :: ra_template
+integer(kind=c_int32_t), intent(in) :: kstdout
+character(len=c_char), dimension(*), intent(in) :: file
+character(len=c_char), dimension(*), intent(in) :: mode
+integer(kind=c_int32_t), intent(inout) :: lun
+integer(kind=c_int32_t), intent(inout) :: byteorder
+integer(kind=c_int32_t), intent(inout) :: ftype
+integer(kind=c_int32_t), intent(inout) :: ier
+character(len=c_char), dimension(*), intent(in), optional :: ra_template
 
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
-integer :: ios,itemp
-integer :: l3264b,maxent,nbytes
+integer :: i,ios,itemp
+integer :: maxent,nbytes
 character(len=1) :: mode1
 character(len=:), allocatable :: caccess
 character(len=:), allocatable :: caction
 character(len=:), allocatable :: cstatus
+character(len=:), allocatable :: f_file,f_mode,f_ra_template
 character(len=20) :: convertx
 
 integer, save :: ienter=0
@@ -33,11 +36,45 @@ integer, save :: lunx=65535
 ! ---------------------------------------------------------------------------------------- 
 ier=0
 ios=0
-l3264b=32
-mode1=mode(1:1)
 caccess=""
 caction="readwrite"
 cstatus=""
+
+! ---------------------------------------------------------------------------------------- 
+! Convert C char file to Fortran.
+! ---------------------------------------------------------------------------------------- 
+i=1
+f_file=""
+do
+   if(file(i).eq.c_null_char)exit
+   f_file=f_file//file(i)
+   i=i+1
+end do 
+
+! ---------------------------------------------------------------------------------------- 
+! Convert C char mode to Fortran.
+! ---------------------------------------------------------------------------------------- 
+i=1
+f_mode=""
+do
+   if(mode(i).eq.c_null_char)exit
+   f_mode=f_mode//mode(i)
+   i=i+1
+end do
+mode1=f_mode(1:1)
+
+! ---------------------------------------------------------------------------------------- 
+! Convert C char ra_template to Fortran, if present.
+! ---------------------------------------------------------------------------------------- 
+if(present(ra_template))then
+   i=1
+   f_ra_template=""
+   do
+      if(ra_template(i).eq.c_null_char)exit
+      f_ra_template=f_ra_template//ra_template(i)
+      i=i+1
+   end do
+endif
 
 ! ---------------------------------------------------------------------------------------- 
 ! Get byte order of the system and set unit number.
@@ -52,7 +89,7 @@ ienter=ienter+1
 if(mode1.eq."r".or.mode1.eq."a")then
 
    ! Open file for stream access; read first 4 bytes; close.
-   open(unit=lun,file=file,form="unformatted",access="stream",status="old",iostat=ios)
+   open(unit=lun,file=f_file,form="unformatted",access="stream",status="old",iostat=ios)
    read(lun,iostat=ios)itemp
    close(lun)
 
@@ -60,11 +97,11 @@ if(mode1.eq."r".or.mode1.eq."a")then
    ! appropriate IO action to prepare for reading the file.
    if(itemp.eq.0)then
       ! Random-Access
-      call ckraend(kstdout,lun,file,isysend,byteorder,convertx,ier)
+      call ckraend(kstdout,lun,f_file,isysend,byteorder,convertx,ier)
       ftype=1
    else
       ! Sequential
-      call ckfilend(kstdout,lun,file,isysend,byteorder,convertx,ier)
+      call ckfilend(kstdout,lun,f_file,isysend,byteorder,convertx,ier)
       ftype=2
       cstatus="old"
       if(mode1.eq."r")then
@@ -73,7 +110,7 @@ if(mode1.eq."r".or.mode1.eq."a")then
       elseif(mode1.eq."a")then
          caccess="append"
       endif
-      open(unit=lun,file=file,form="unformatted",convert="big_endian",status=cstatus,&
+      open(unit=lun,file=f_file,form="unformatted",convert="big_endian",status=cstatus,&
            iostat=ios,access=caccess,action=caction)
       ier=ios
    endif
@@ -86,14 +123,14 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
    if(ftype.eq.1)then
       ! Random-Access
       if(present(ra_template))then
-         if(ra_template.eq."small")then
+         if(f_ra_template.eq."small")then
             maxent=300
             nbytes=2000
-         elseif(ra_template.eq."large")then
+         elseif(f_ra_template.eq."large")then
             maxent=840
             nbytes=20000
          endif
-         call createra(kstdout,file,l3264b,lun,maxent,nbytes,ier)
+         call createra(kstdout,f_file,l3264b,lun,maxent,nbytes,ier)
          byteorder=1
       endif
    elseif(ftype.eq.2)then
@@ -102,7 +139,7 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
       if(mode1.eq."x")cstatus="new"
       byteorder=1
       ftype=2
-      open(unit=lun,file=file,form="unformatted",convert="big_endian",status=cstatus,&
+      open(unit=lun,file=f_file,form="unformatted",convert="big_endian",status=cstatus,&
            action=caction,iostat=ios)
       ier=ios
    endif
@@ -110,4 +147,4 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
 endif
 
 return
-end subroutine openfile
+end subroutine open_tdlpack_file

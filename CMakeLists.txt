@@ -66,10 +66,10 @@ endif()
 add_subdirectory(src)
 
 # Build tests.
-#include(CTest)
-#if(BUILD_TESTING)
-#  add_subdirectory(tests)
-#endif()
+include(CTest)
+if(BUILD_TESTING)
+  add_subdirectory(tests)
+endif()
 
 # If doxygen documentation we enabled, build it.
 #if(ENABLE_DOCS)

@@ -1,4 +1,4 @@
-subroutine openlog(kstdout,path) bind(c)
+subroutine open_log_file(kstdout,path) bind(c)
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
 
@@ -40,5 +40,10 @@ else
    open(unit=kstdout,form="formatted",iostat=ios)
 endif
 
+if(ios.ne.0)then
+   write(6,fmt='(A,I2,A,I2)')" Error opening file on Fortran unit = ",kstdout,&
+                           ", iostat = ",ios
+endif
+
 return
-end subroutine openlog
+end subroutine open_log_file

@@ -1,5 +1,5 @@
 subroutine writefile(kstdout,file,lun,ftype,nd5,ipack,ier,nreplace,ncheck)
-use tdlpacklib_mod
+use tdlpack_mod
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 

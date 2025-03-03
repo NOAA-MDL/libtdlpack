@@ -1,5 +1,5 @@
 subroutine writesq_station_record(kfildo,kfilio,nd5,ipack,ntotby,ntotrc,ier)
-use tdlpacklib_mod
+use tdlpack_mod
 implicit none
 
 ! ----------------------------------------------------------------------------------------
