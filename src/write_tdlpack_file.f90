@@ -1,23 +1,25 @@
-subroutine writefile(kstdout,file,lun,ftype,nd5,ipack,ier,nreplace,ncheck)
+subroutine write_tdlpack_file(kstdout,file,lun,ftype,nd5,ipack,ier,nreplace,ncheck) bind(c)
+use iso_c_binding, only: c_int32_t, c_char, c_null_char
 use tdlpack_mod
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer, intent(in) :: kstdout
-character(len=*), intent(in) :: file
-integer, intent(in) :: lun
-integer, intent(in) :: nd5
-integer, intent(in) :: ftype
-integer, intent(in), dimension(nd5) :: ipack
-integer, intent(out) :: ier
-integer, intent(in), optional :: nreplace
-integer, intent(in), optional :: ncheck
+integer(kind=c_int32_t), intent(in) :: kstdout
+character(kind=c_char), intent(in), dimension(*) :: file
+integer(kind=c_int32_t), intent(in) :: lun
+integer(kind=c_int32_t), intent(in) :: nd5
+integer(kind=c_int32_t), intent(in) :: ftype
+integer(kind=c_int32_t), intent(in), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(out) :: ier
+integer(kind=c_int32_t), intent(in), optional :: nreplace
+integer(kind=c_int32_t), intent(in), optional :: ncheck
 
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
+character(len=:), allocatable :: f_file
 integer :: n,ios,ioctet,ntrash,nsize
 integer :: nreplacex,ncheckx
 integer, dimension(4) :: id
@@ -33,6 +35,14 @@ nreplacex=0
 nsize=0
 ntrash=0
 id(:)=0
+
+f_file=""
+n=1
+do
+   if(file(n).eq.c_null_char)exit
+   f_file=f_file//file(n)
+   n=n+1
+end do
 
 ! ---------------------------------------------------------------------------------------- 
 ! Perform appropriate writing according file type (ftype).
@@ -60,4 +70,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine writefile
+end subroutine write_tdlpack_file

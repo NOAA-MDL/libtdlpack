@@ -1,19 +1,21 @@
-subroutine pack1d_wrapper(nd7,is0,is1,is2,is4,nd,data,nd5,ipack,ioctet,ier)
+subroutine pack_1d_wrapper(nd7,is0,is1,is2,is4,nd,data,nd5,ipack,ioctet,ier) bind(c)
+use iso_c_binding, only: c_int32_t, c_float
+use tdlpack_mod
 implicit none
 
-integer(kind=4), intent(in) :: nd7
-integer(kind=4), intent(in), dimension(nd7) :: is0
-integer(kind=4), intent(in), dimension(nd7) :: is1
-integer(kind=4), intent(in), dimension(nd7) :: is2
-integer(kind=4), intent(in), dimension(nd7) :: is4
-integer(kind=4), intent(in) :: nd
-real(kind=4), intent(in), dimension(nd) :: data
-integer(kind=4), intent(in) :: nd5
-integer(kind=4), intent(out), dimension(nd5) :: ipack
-integer(kind=4), intent(out) :: ioctet
-integer(kind=4), intent(out) :: ier
+integer(kind=c_int32_t), intent(in) :: nd7
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is0
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is1
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is2
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is4
+integer(kind=c_int32_t), intent(in) :: nd
+real(kind=c_float), intent(in), dimension(nd) :: data
+integer(kind=c_int32_t), intent(in) :: nd5
+integer(kind=c_int32_t), intent(inout), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(out) :: ioctet
+integer(kind=c_int32_t), intent(out) :: ier
 
-integer(kind=4) :: kfildo,l3264b,lx,minpk
+integer(kind=4) :: kfildo,lx,minpk
 real(kind=4) :: xmissp,xmisss
 
 integer(kind=4), allocatable, dimension(:) :: ic
@@ -21,7 +23,6 @@ integer(kind=4), allocatable, dimension(:) :: ic
 ier=0
 ioctet=0
 kfildo=6
-l3264b=storage_size(nd5)
 lx=0
 minpk=21
 xmissp=real(is4(4))
@@ -38,26 +39,28 @@ call pack1d(kfildo,data,ic,nd,is0,is1,is2,is4,&
 if(allocated(ic))deallocate(ic)
 
 return
-end subroutine pack1d_wrapper
+end subroutine pack_1d_wrapper
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine pack2d_wrapper(nd7,is0,is1,is2,is4,nx,ny,data,nd5,ipack,ioctet,ier)
+subroutine pack_2d_wrapper(nd7,is0,is1,is2,is4,nx,ny,data,nd5,ipack,ioctet,ier) bind(c)
+use iso_c_binding, only: c_int32_t, c_float
+use tdlpack_mod
 implicit none
 
-integer(kind=4), intent(in) :: nd7
-integer(kind=4), intent(in), dimension(nd7) :: is0
-integer(kind=4), intent(in), dimension(nd7) :: is1
-integer(kind=4), intent(in), dimension(nd7) :: is2
-integer(kind=4), intent(in), dimension(nd7) :: is4
-integer(kind=4), intent(in) :: nx
-integer(kind=4), intent(in) :: ny
-real(kind=4), intent(in), dimension(nx,ny) :: data
-integer(kind=4), intent(in) :: nd5
-integer(kind=4), intent(out), dimension(nd5) :: ipack
-integer(kind=4), intent(out) :: ioctet
-integer(kind=4), intent(out) :: ier
+integer(kind=c_int32_t), intent(in) :: nd7
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is0
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is1
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is2
+integer(kind=c_int32_t), intent(in), dimension(nd7) :: is4
+integer(kind=c_int32_t), intent(in) :: nx
+integer(kind=c_int32_t), intent(in) :: ny
+real(kind=c_float), intent(in), dimension(nx,ny) :: data
+integer(kind=c_int32_t), intent(in) :: nd5
+integer(kind=c_int32_t), intent(out), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(out) :: ioctet
+integer(kind=c_int32_t), intent(out) :: ier
 
-integer(kind=4) :: kfildo,l3264b,lx,minpk
+integer(kind=4) :: kfildo,lx,minpk
 real(kind=4) :: xmissp,xmisss
 
 integer(kind=4), allocatable, dimension(:) :: ic
@@ -66,7 +69,6 @@ integer(kind=4), allocatable, dimension(:,:) :: ia
 ier=0
 ioctet=0
 kfildo=6
-l3264b=storage_size(nd5)
 lx=0
 minpk=21
 xmissp=real(is4(4))
@@ -87,4 +89,4 @@ if(allocated(ia))deallocate(ia)
 if(allocated(ic))deallocate(ic)
 
 return
-end subroutine pack2d_wrapper
+end subroutine pack_2d_wrapper
