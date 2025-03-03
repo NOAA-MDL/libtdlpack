@@ -93,4 +93,11 @@ foreach(kind ${kinds})
   #set_target_properties(test_write_ra PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
   add_test(test_write_ra test_write_ra)
 
+  # Test write_sq
+  add_executable(test_write_sq test_write_sq.c)
+  target_link_libraries(test_write_sq PUBLIC tdlpack::tdlpack)
+  #target_compile_definitions(test_write_sq PRIVATE "LSIZE=${kind_definition}")
+  #set_target_properties(test_write_sq PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  add_test(test_write_sq test_write_sq)
+
 endforeach() # foreach(kind ${kinds})
