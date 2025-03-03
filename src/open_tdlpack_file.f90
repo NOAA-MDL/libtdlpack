@@ -7,8 +7,8 @@ implicit none
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
 integer(kind=c_int32_t), intent(in) :: kstdout
-character(len=c_char), dimension(*), intent(in) :: file
-character(len=c_char), dimension(*), intent(in) :: mode
+character(kind=c_char), dimension(*), intent(in) :: file
+character(kind=c_char), dimension(*), intent(in) :: mode
 integer(kind=c_int32_t), intent(inout) :: lun
 integer(kind=c_int32_t), intent(inout) :: byteorder
 integer(kind=c_int32_t), intent(inout) :: ftype

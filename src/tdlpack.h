@@ -19,6 +19,12 @@ void unpack_meta_wrapper(int32_t *nd5, int32_t *ipack, int32_t *nd7, int32_t *is
 void unpack_data_wrapper(int32_t *nd5, int32_t *ipack, int32_t *nd7, int32_t *is0,
                          int32_t *is1, int32_t *is2, int32_t *is4, float *data, int32_t *ier);
 
+void write_ra(int32_t *kfildo, int32_t *kfilx, char *cfilx, int32_t id[4], int32_t *nd5,
+              int32_t *ipack, int32_t *nrepla, int32_t *ncheck, int32_t *ier);
+
+void write_ra_char(int32_t *kfildo, int32_t *kfilx, char *cfilx, int32_t id[4], int32_t *nd5,
+              	   char ipack[][4], int32_t *nrepla, int32_t *ncheck, int32_t *ier);
+
 #ifdef __cplusplus
 }
 #endif
