@@ -35,6 +35,8 @@ int main()
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
+      printf("\tTotal number of bytes written: %d\n", ntotby);
+      printf("\tTotal number of records written: %d\n", ntotrc);
 
       // Create data.
       int32_t nd7 = 54;
@@ -97,10 +99,12 @@ int main()
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
+      printf("\tioctet = %d\n", ioctet);
 
       // Write TDLPACK record.
       printf("Writing TDLPACK data record...");
       ier = 0;
+      nd5_data = ioctet / c_nbypwd; // IMPORTANT: different than the original value.
       write_tdlpack_file(&kstdout, name, &lun, &filetype, &nd5_data, ipack, &ier, NULL, NULL); 
       if (ier != 0)
          return ier;

@@ -108,6 +108,7 @@ int main()
       // Write TDLPACK record.
       printf("Writing TDLPACK data record...");
       ier = 0;
+      nd5_data = ioctet / c_nbypwd; // IMPORTANT: different than the original value.
       write_tdlpack_file(&kstdout, name, &lun, &filetype, &nd5_data, ipack, &ier, NULL, NULL);
       if (ier != 0)
          return ier;
