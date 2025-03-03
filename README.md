@@ -1,6 +1,11 @@
 # libtdlpack
 
-**libtdlpack** is a subset of Fortran subroutines from the MOS-2000 (MOS2K) software system used for reading and writing TDLPACK files.  **_This primary use for this library will be for the [tdlpackio](https://github.com/NOAA-MDL/tdlpackio) Python package._**
+**libtdlpack** is a subset of Fortran subroutines from the MOS-2000 (MOS2K) software system used for reading and writing TDLPACK files.
+
+>[!IMPORTANT]
+>**_The primary use for this library will be to serve the [tdlpackio](https://github.com/NOAA-MDL/tdlpackio) Python package.  A handful of subroutines have been further modified to interface with C using the `ISO_C_BINDING` instrinsic module._**
+
+## Introduction
 
 The MOS2K system serves multiple functions, most notably providing subroutines for encoding and decoding the TDLPACK data format into Fortran variable-length unformatted files and direct-access files. In MOS2K terminology, these are referred to as "sequential" and "random access" files, respectively.
 
