@@ -38,7 +38,7 @@ end do
 ! ----------------------------------------------------------------------------------------
 ! Call WRTDLM
 ! ----------------------------------------------------------------------------------------
-call wrtdlm(kfildo,kfilx,cfilx,id,ipack,nd5,nrepla,ncheck,l3264b,ier)
+call wrtdlm(kfildo,kfilx,f_cfilx,id,ipack,nd5,nrepla,ncheck,l3264b,ier)
 
 return
 end subroutine write_ra
@@ -86,7 +86,8 @@ end do
 ! ----------------------------------------------------------------------------------------
 ! Call WRTDLM
 ! ----------------------------------------------------------------------------------------
-call wrtdlmc(kfildo,kfilx,cfilx,id,ipack,nd5,nrepla,ncheck,l3264b,ier)
+write(6,*)"IN FORTRAN, id = ",id
+call wrtdlmc(kfildo,kfilx,f_cfilx,id,ipack,nd5,nrepla,ncheck,l3264b,ier)
 
 return
 end subroutine write_ra_char

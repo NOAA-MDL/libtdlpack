@@ -32,6 +32,9 @@ int main()
 
       ier=0;
       write_ra_char(&kstdout, &lun, name, id, &nd5, ipack, &nreplace, &ncheck, &ier);
+
+      ier=0;
+      close_tdlpack_file(&kstdout, &lun, &filetype, &ier);
    }
    printf(" SUCCESS!\n");
 

@@ -7,6 +7,8 @@
 extern "C" {
 #endif
 
+void close_tdlpack_file(int32_t *kstdout, int32_t *lun, int32_t *ftype, int32_t *ier);
+
 void open_log_file(int32_t *kstdout, char *path);
 
 void open_tdlpack_file(int32_t *kstdout, char *file, char *mode, int32_t *lun,

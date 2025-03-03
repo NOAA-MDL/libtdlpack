@@ -1,13 +1,14 @@
-subroutine closefile(kstdout,lun,ftype,ier)
+subroutine close_tdlpack_file(kstdout,lun,ftype,ier) bind(c)
+use iso_c_binding, only: c_int32_t
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer, intent(in) :: kstdout
-integer, intent(in) :: lun
-integer, intent(in) :: ftype
-integer, intent(out) :: ier
+integer(kind=c_int32_t), intent(in) :: kstdout
+integer(kind=c_int32_t), intent(in) :: lun
+integer(kind=c_int32_t), intent(in) :: ftype
+integer(kind=c_int32_t), intent(out) :: ier
 
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
@@ -33,4 +34,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine closefile
+end subroutine close_tdlpack_file
