@@ -1,23 +1,25 @@
-subroutine readfile(kstdout,file,lun,nd5,l3264b,ftype,ioctet,ipack,ier,id)
+subroutine read_tdlpack_file(kstdout,file,lun,nd5,ftype,ioctet,ipack,ier,id) bind(c)
+use iso_c_binding, only: c_int32_t, c_char, c_null_char
+use tdlpack_mod
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer, intent(in) :: kstdout
-character(len=*), intent(in) :: file
-integer, intent(in) :: lun
-integer, intent(in) :: nd5
-integer, intent(in) :: l3264b
-integer, intent(in) :: ftype
-integer, intent(out) :: ioctet
-integer, intent(out), dimension(nd5) :: ipack
-integer, intent(out) :: ier
-integer, intent(in), dimension(4), optional :: id
+integer(kind=c_int32_t), intent(in) :: kstdout
+character(kind=c_char), intent(in), dimension(*) :: file
+integer(kind=c_int32_t), intent(in) :: lun
+integer(kind=c_int32_t), intent(in) :: nd5
+integer(kind=c_int32_t), intent(in) :: ftype
+integer(kind=c_int32_t), intent(out) :: ioctet
+integer(kind=c_int32_t), intent(out), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(out) :: ier
+integer(kind=c_int32_t), intent(in), dimension(4), optional :: id
 
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
+character(len=:), allocatable :: f_file
 integer :: n,ios,ntrash,nvalue
 
 ! ---------------------------------------------------------------------------------------- 
@@ -27,6 +29,14 @@ ier=0
 ios=0
 ntrash=0
 nvalue=0
+
+f_file=""
+n=1
+do
+   if(file(n).eq.c_null_char)exit
+   f_file=f_file//file(n)
+   n=n+1
+end do
 
 ! ---------------------------------------------------------------------------------------- 
 ! Perform appropriate read for the given file type (ftype).
@@ -48,4 +58,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine readfile
+end subroutine read_tdlpack_file

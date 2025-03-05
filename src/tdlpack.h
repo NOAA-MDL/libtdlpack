@@ -27,6 +27,9 @@ void pack_2d_wrapper(int32_t *nd7, int32_t *is0, int32_t *is1, int32_t *is2, int
                      int32_t *nx, int32_t *ny, float *data, int32_t *nd5, int32_t *ipack,
                      int32_t *ioctet, int32_t *ier);
 
+void read_tdlpack_file(int32_t *kstdout, char *file, int32_t *lun, int32_t *nd5, int32_t *ftype,
+                       int32_t * ioctet, int32_t *ipack, int32_t *ier, int32_t id[4]);
+
 void trail(int32_t *kfildo, int32_t *kfilio, int32_t *l3264b, int32_t *l3264w,
            int32_t *ntotby, int32_t *ntotrc, int32_t *ier);
 

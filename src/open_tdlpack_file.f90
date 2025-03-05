@@ -24,8 +24,9 @@ character(len=1) :: mode1
 character(len=:), allocatable :: caccess
 character(len=:), allocatable :: caction
 character(len=:), allocatable :: cstatus
-character(len=:), allocatable :: f_file,f_mode,f_ra_template
+character(len=:), allocatable :: f_mode,f_ra_template
 character(len=20) :: convertx
+character(len=1024) :: f_file
 
 integer, save :: ienter=0
 integer, save :: isysend=0
@@ -39,18 +40,17 @@ ios=0
 caccess=""
 caction="readwrite"
 cstatus=""
+f_file=repeat(" ",len(f_file))
 
 ! ---------------------------------------------------------------------------------------- 
 ! Convert C char file to Fortran.
 ! ---------------------------------------------------------------------------------------- 
 i=1
-f_file=""
 do
    if(file(i).eq.c_null_char)exit
-   f_file=f_file//file(i)
+   f_file(i:i)=file(i)
    i=i+1
 end do 
-f_file=f_file(1:i-1)
 
 ! ---------------------------------------------------------------------------------------- 
 ! Convert C char mode to Fortran.
