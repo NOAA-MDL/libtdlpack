@@ -1,18 +1,29 @@
 #include <stdio.h>
 #include <stdint.h>
+#include <stdlib.h>
 #include "tdlpack.h"
+
+#define ERROR -1
+
+void int_to_char_string(int32_t *ipack, int index, char *string)
+{
+   string[0] = (ipack[index] >> 24) & 0xFF;
+   string[1] = (ipack[index] >> 16) & 0xFF;
+   string[2] = (ipack[index] >>  8) & 0xFF;
+   string[3] = (ipack[index] >>  0) & 0xFF;
+}
 
 int main()
 {
    int32_t kstdout=6;
+   char name[] = "test_write_ra_stations.tdlp";
+   int32_t byteorder = 1; // 1 = Big-Endian
+   int32_t filetype = 1; // 1 = RA
 
    printf("Test writing stations and data to a small random access file\n");
    {
       // Open new file.
-      char name[] = "test_write_ra_stations.tdlp";
       char mode[] = "w";
-      int32_t byteorder=1; // 1 = Big-Endian
-      int32_t filetype=1; // 1 = RA
       int32_t lun=0;
       int32_t ier;
       char ra_template[] = "small";
@@ -115,10 +126,129 @@ int main()
       printf(" SUCCESS!\n");
 
       // Close the TDLPACK file.
+      printf("Closing random-access file...");
       ier=0;
       close_tdlpack_file(&kstdout, &lun, &filetype, &ier);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
    }
    printf(" SUCCESS!\n");
+
+// ----------------------------------------------------------------------------------------
+// Now open the file and re-read.
+// ----------------------------------------------------------------------------------------
+   printf("Test reading random-access file.\n");
+   {
+      // Open file
+      char mode[] = "r";
+      int32_t lun;
+      int32_t ier;
+
+      printf("Opening TDLPACK random-access file for reading...");
+      lun = 0;
+      byteorder = 0;
+      filetype = 0;
+      ier = 0;
+      open_tdlpack_file(&kstdout, name, mode, &lun, &byteorder, &filetype, &ier, NULL);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
+      printf("\t Fortran unit number = %d\n", lun);
+      printf("\t Byte order = %d\n", byteorder);
+      printf("\t File type = %d\n", filetype);
+
+      // Read first record
+      int32_t nd5 = 1000; // Enough to size ipack
+      int32_t ipack[nd5] = {};
+      int32_t id[4] = {};
+      int32_t ioctet = 0;
+      char station[6] = {};
+
+      id[0] = 400001000;
+      id[1] = 0;
+      id[2] = 0;
+      id[3] = 0;
+
+      printf("Reading first record...");
+      ier = 0;
+      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, id);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
+      printf("\t Size of record, ioctet = %d\n", ioctet);
+
+      for (int i=0; i < ioctet/c_nbypwd; i++)
+      {
+         int_to_char_string(ipack, i, station);
+         printf("station = %s\n", station);
+      }
+
+      id[0] = 9999;
+      id[1] = 0;
+      id[2] = 0;
+      id[3] = 0;
+
+      // Read second record
+      printf("Reading second record...");
+      ier = 0;
+      ioctet = 0;
+      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, id);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
+      printf("\t Size of record, ioctet = %d\n", ioctet);
+
+      // Unpack the second record.
+      int32_t nd7 = 54;
+      int32_t is0[nd7] = {};
+      int32_t is1[nd7] = {};
+      int32_t is2[nd7] = {};
+      int32_t is4[nd7] = {};
+      float data[nd5] = {};
+
+      printf("Unpacking the data record...");
+      ier = 0;
+      unpack_data_wrapper(&nd5, ipack, &nd7, is0, is1, is2, is4, data, &ier);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
+      printf("\t Size of record, ioctet = %d\n", ioctet);
+      printf("\t TDLPACK Section 0, is0 = [");
+      for (int i=0; i < 3; i++)
+         printf("%d ", is0[i]);
+      printf("]\n");
+      printf("\t TDLPACK Section 1, is1 = [");
+      for (int i=0; i < 54; i++)
+         printf("%d ", is1[i]);
+      printf("]\n");
+      printf("\t TDLPACK Section 4, is4 = [");
+      for (int i=0; i < 7; i++)
+         printf("%d ", is4[i]);
+      printf("]\n");
+      printf("\t TDLPACK data = [");
+      for (int i=0; i < 3; i++)
+         printf("%f ", data[i]);
+      printf("]\n");
+
+      // TRY to read again, but should get EOF
+      printf("Try to read again (should get EOF)...");
+      ier = 0;
+      ioctet = 0;
+      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, id);
+      if (ier == 0)
+         return ier;
+      printf(" SUCCESS!\n");
+      printf("\t ier = %d\n", ier);
+
+      // Close file.
+      printf("Closing TDLPACK file...");
+      ier = 0;
+      close_tdlpack_file(&kstdout, &lun, &filetype, &ier);
+      if (ier != 0)
+         return ier;
+      printf(" SUCCESS!\n");
+   }
 
    return 0;
 }
