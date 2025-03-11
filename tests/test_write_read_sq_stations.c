@@ -1,9 +1,11 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 #include "tdlpack.h"
 
 #define ERROR -1
+#define NCHAR 8
 
 void int_to_char_string(int32_t *ipack, int index, char *string)
 {
@@ -15,9 +17,7 @@ void int_to_char_string(int32_t *ipack, int index, char *string)
 
 int main()
 {
-   int32_t kstdout=6;
    char name[] = "test_write_sq_stations.tdlp";
-   int32_t byteorder = 1; // 1 = Big-Endian
    int32_t filetype = 2; // 2 = SQ
 
    printf("Test writing stations and data to a sequential file\n");
@@ -28,37 +28,49 @@ int main()
 
       printf("Opening TDLPACK file for writing...");
       ier = 0;
-      open_tdlpack_file(&kstdout, name, mode, &lun, &byteorder, &filetype, &ier, NULL);
+      open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
 
       // Write station record.
-      int32_t nd5 = 3;
-      char cpack[3][8] = {"KACY    ", "KBWI    ", "KPHL    "};
+      int32_t nsta = 3;
+      int32_t nd5 = 6;
+      char stations[3][NCHAR] = {"KACY    ", "KBWI    ", "KPHL    "};
+      int32_t *ipack;
       int32_t ntotby = 0;
       int32_t ntotrc = 0;
 
+      // Put station call letter strings into ipack
+      ipack = malloc(nsta * NCHAR);
+      for (int i = 0; i < nsta; i++)
+      {
+         memcpy(&ipack[i*2], stations[i], NCHAR/2);
+         memcpy(&ipack[i*2+1], stations[i]+(NCHAR/2), NCHAR/2);
+      }
+
       printf("Writing Station call letter record...");
       ier = 0;
-      write_sq_station_record(&kstdout, &lun, &nd5, cpack, &ntotby, &ntotrc, &ier);
+      write_station_record(name, &lun, &filetype, &nsta, &nd5, ipack, &ntotby, &ntotrc, &ier, NULL, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
       printf("\tTotal number of bytes written: %d\n", ntotby);
       printf("\tTotal number of records written: %d\n", ntotrc);
 
+      free(ipack);
+
       // Create data.
-      int32_t nd7 = 54;
-      int32_t is0[nd7] = {};
-      int32_t is1[nd7] = {};
-      int32_t is2[nd7] = {};
-      int32_t is4[nd7] = {};
+      int32_t is0[ND7] = {};
+      int32_t is1[ND7] = {};
+      int32_t is2[ND7] = {};
+      int32_t is4[ND7] = {};
       int32_t nd = 3;
       float data[3] = {30.0, 33.0, 34.0};
       int32_t nd5_data = 1000;
-      int32_t ipack[nd5_data] = {};
       int32_t ioctet = 0;
+
+      ipack = malloc(nd5_data);
 
       is1[0] = 0;
       is1[1] = 0;
@@ -103,9 +115,9 @@ int main()
       is4[3] = 9999;
 
       // Pack data.
-      printf("Packing station data into TDLPACK...");
+      printf("Packing data into TDLPACK...");
       ier = 0;
-      pack_1d_wrapper(&nd7, is0, is1, is2, is4, &nd, data, &nd5_data, ipack, &ioctet, &ier);
+      pack_1d_wrapper(is0, is1, is2, is4, &nd, data, &nd5_data, ipack, &ioctet, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -114,16 +126,19 @@ int main()
       // Write TDLPACK record.
       printf("Writing TDLPACK data record...");
       ier = 0;
-      nd5_data = ioctet / c_nbypwd; // IMPORTANT: different than the original value.
-      write_tdlpack_file(&kstdout, name, &lun, &filetype, &nd5_data, ipack, &ier, NULL, NULL);
+      nd5_data = ioctet / TDLP_NBYPWD; // IMPORTANT: different than the original value.
+      write_tdlpack_record(name, &lun, &filetype, &nd5_data, ipack, &ier, NULL, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
 
+      free(ipack);
+      return 0;
+
       // Write trailer record
       printf("Writing trailer record...");
       ier = 0;
-      trail(&kstdout, &lun, &c_l3264b, &c_l3264w, &ntotby, &ntotrc, &ier);
+      write_trailer_record(&lun, &filetype, &ntotby, &ntotrc, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -131,14 +146,16 @@ int main()
       // Close file.
       printf("Closing TDLPACK file...");
       ier = 0;
-      close_tdlpack_file(&kstdout, &lun, &filetype, &ier);
+      close_tdlpack_file(&lun, &filetype, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
    }
+
 // ----------------------------------------------------------------------------------------
 // Now open the file and re-read.
 // ----------------------------------------------------------------------------------------
+
    printf("Test reading sequential file.\n");
    {
       // Open file
@@ -148,26 +165,24 @@ int main()
 
       printf("Opening TDLPACK file for reading...");
       lun = 0;
-      byteorder = 0;
       filetype = 0;
       ier = 0;
-      open_tdlpack_file(&kstdout, name, mode, &lun, &byteorder, &filetype, &ier, NULL);
+      open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
       printf("\t Fortran unit number = %d\n", lun);
-      printf("\t Byte order = %d\n", byteorder);
       printf("\t File type = %d\n", filetype);
 
       // Read first record
-      int32_t nd5 = 1000; // Enough to size ipack
-      int32_t ipack[nd5] = {};
+      int32_t nd5_data = 1000; // Enough to size ipack
+      int32_t ipack[nd5_data] = {};
       int32_t ioctet = 0;
       char station[6] = {};
 
       printf("Reading first record...");
       ier = 0;
-      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
       if (ier != 0)
          return ier;
       if (ioctet != 24)
@@ -175,7 +190,7 @@ int main()
       printf(" SUCCESS!\n");
       printf("\t Size of record, ioctet = %d\n", ioctet);
 
-      //for (int i=0; i < ioctet/c_nbypwd; i++)
+      //for (int i=0; i < ioctet/TDLP_NBYPWD; i++)
       //{
       //   int_to_char_string(ipack, i, station);
       //   printf("station = %s\n", station);
@@ -184,23 +199,22 @@ int main()
       // Read second record
       printf("Reading second record...");
       ier = 0;
-      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
       printf("\t Size of record, ioctet = %d\n", ioctet);
 
       // Unpack the second record.
-      int32_t nd7 = 54;
-      int32_t is0[nd7] = {};
-      int32_t is1[nd7] = {};
-      int32_t is2[nd7] = {};
-      int32_t is4[nd7] = {};
-      float data[nd5] = {};
+      int32_t is0[ND7] = {};
+      int32_t is1[ND7] = {};
+      int32_t is2[ND7] = {};
+      int32_t is4[ND7] = {};
+      float data[nd5_data] = {};
 
       printf("Unpacking the data record...");
       ier = 0;
-      unpack_data_wrapper(&nd5, ipack, &nd7, is0, is1, is2, is4, data, &ier);
+      unpack_data(&nd5_data, ipack, is0, is1, is2, is4, data, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -225,7 +239,7 @@ int main()
       // Read third record (trailer)
       printf("Reading third record...");
       ier = 0;
-      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -235,7 +249,7 @@ int main()
       // TRY to read again, but should get EOF
       printf("Try to read again (should get EOF)...");
       ier = 0;
-      read_tdlpack_file(&kstdout, name, &lun, &nd5, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
       if (ier == 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -244,7 +258,7 @@ int main()
       // Close file.
       printf("Closing TDLPACK file...");
       ier = 0;
-      close_tdlpack_file(&kstdout, &lun, &filetype, &ier);
+      close_tdlpack_file(&lun, &filetype, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
