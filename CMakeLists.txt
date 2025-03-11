@@ -19,6 +19,7 @@ option(BUILD_SHARED_LIBS "Build shared libraries" ON)
 option(BUILD_STATIC_LIBS "Build static libraries" ON)
 option(BUILD_4 "Build the 4-byte integer & real version of the library, libtdlpack_4.{a,so}" ON)
 #option(BUILD_8 "Build the 8-byte integer & real version of the library, libtdlpack_8.{a,so}" OFF)
+option(BUILD_TESTING "Build tests" ON)
 option(CMAKE_POSITION_INDEPENDENT_CODE "Enable PIC" ON)
 
 # Figure whether user wants a _4 and/or _8.

@@ -1,11 +1,11 @@
-subroutine close_tdlpack_file(kstdout,lun,ftype,ier) bind(c)
+subroutine close_tdlpack_file(lun,ftype,ier) bind(c)
+use tdlpack_mod
 use iso_c_binding, only: c_int32_t
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer(kind=c_int32_t), intent(in) :: kstdout
 integer(kind=c_int32_t), intent(in) :: lun
 integer(kind=c_int32_t), intent(in) :: ftype
 integer(kind=c_int32_t), intent(out) :: ier

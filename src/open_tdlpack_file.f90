@@ -1,4 +1,5 @@
-subroutine open_tdlpack_file(kstdout,file,mode,lun,byteorder,ftype,ier,ra_template) bind(c)
+subroutine open_tdlpack_file(file,mode,lun,ftype,ier,ra_template) bind(c)
+use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 use tdlpack_mod
 implicit none
@@ -6,11 +7,9 @@ implicit none
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer(kind=c_int32_t), intent(in) :: kstdout
 character(kind=c_char), dimension(*), intent(in) :: file
 character(kind=c_char), dimension(*), intent(in) :: mode
 integer(kind=c_int32_t), intent(inout) :: lun
-integer(kind=c_int32_t), intent(inout) :: byteorder
 integer(kind=c_int32_t), intent(inout) :: ftype
 integer(kind=c_int32_t), intent(inout) :: ier
 character(len=c_char), dimension(*), intent(in), optional :: ra_template
@@ -18,7 +17,7 @@ character(len=c_char), dimension(*), intent(in), optional :: ra_template
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
-integer :: i,ios,itemp
+integer :: i,ios,itemp,ibyteorder
 integer :: maxent,nbytes
 character(len=1) :: mode1
 character(len=:), allocatable :: caccess
@@ -37,6 +36,7 @@ integer, save :: lunx=65535
 ! ---------------------------------------------------------------------------------------- 
 ier=0
 ios=0
+ibyteorder=0
 caccess=""
 caction="readwrite"
 cstatus=""
@@ -98,11 +98,11 @@ if(mode1.eq."r".or.mode1.eq."a")then
    ! appropriate IO action to prepare for reading the file.
    if(itemp.eq.0)then
       ! Random-Access
-      call ckraend(kstdout,lun,f_file,isysend,byteorder,convertx,ier)
+      call ckraend(kstdout,lun,f_file,isysend,ibyteorder,convertx,ier)
       ftype=1
    else
       ! Sequential
-      call ckfilend(kstdout,lun,f_file,isysend,byteorder,convertx,ier)
+      call ckfilend(kstdout,lun,f_file,isysend,ibyteorder,convertx,ier)
       ftype=2
       cstatus="old"
       if(mode1.eq."r")then
@@ -131,14 +131,12 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
             maxent=840
             nbytes=20000
          endif
-         call createra(kstdout,f_file,l3264b,lun,maxent,nbytes,ier)
-         byteorder=1
+         call createra(kstdout,f_file,TDLP_L3264B,lun,maxent,nbytes,ier)
       endif
    elseif(ftype.eq.2)then
       ! Sequential
       if(mode1.eq."w")cstatus="replace"
       if(mode1.eq."x")cstatus="new"
-      byteorder=1
       ftype=2
       open(unit=lun,file=f_file,form="unformatted",convert="big_endian",status=cstatus,&
            action=caction,iostat=ios)
