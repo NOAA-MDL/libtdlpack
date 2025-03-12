@@ -87,11 +87,11 @@ foreach(kind ${kinds})
   add_test(test_open_tdlpack_file test_open_tdlpack_file)
 
   # Test write_ra
-  add_executable(test_write_ra_stations test_write_ra_stations.c)
-  target_link_libraries(test_write_ra_stations PUBLIC tdlpack::tdlpack)
+  add_executable(test_write_read_ra_stations test_write_read_ra_stations.c)
+  target_link_libraries(test_write_read_ra_stations PUBLIC tdlpack::tdlpack)
   #target_compile_definitions(test_write_ra_stations PRIVATE "LSIZE=${kind_definition}")
   #set_target_properties(test_write_ra_stations PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  add_test(test_write_ra_stations test_write_ra_stations)
+  add_test(test_write_read_ra_stations test_write_read_ra_stations)
 
   # Test writing, then reading station sequential file.
   add_executable(test_write_read_sq_stations test_write_read_sq_stations.c)

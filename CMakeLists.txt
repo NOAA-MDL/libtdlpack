@@ -48,7 +48,8 @@ endif()
 
 # Set compiler flags.
 if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
-  set(CMAKE_Fortran_FLAGS "-g -traceback -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")
+  # INTEL
+  set(CMAKE_Fortran_FLAGS "-O3 -g -traceback -assume byterecl -fp-model strict -fpp -auto ${CMAKE_Fortran_FLAGS}")
   #set(CMAKE_Fortran_FLAGS_DEBUG "-O0 -check all -warn all")
   #if(CMAKE_Fortran_COMPILER_ID MATCHES "^(IntelLLVM)$")
   #  # Avoid Intel OneAPI 2023.2.1 bug
@@ -56,6 +57,7 @@ if(CMAKE_Fortran_COMPILER_ID MATCHES "^(Intel|IntelLLVM)$")
   #endif()
 #  set(fortran_8_flags "-i8 -r8")
 elseif(CMAKE_Fortran_COMPILER_ID MATCHES "^(GNU)$")
+  # GNU
   set(CMAKE_Fortran_FLAGS "-O3 -g -fbacktrace -fautomatic -finit-integer=zero -finit-real=zero -finit-logical=false ${CMAKE_Fortran_FLAGS}")
   set(F77_FLAGS "-fd-lines-as-comments -ffixed-form")
   set(F90_FLAGS "")
