@@ -11,7 +11,7 @@ integer(kind=c_int32_t), intent(in) :: lun
 integer(kind=c_int32_t), intent(in) :: ftype
 integer(kind=c_int32_t), intent(in) :: nsta
 integer(kind=c_int32_t), intent(in) :: nd5
-character(kind=c_int32_t), intent(in), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(in), dimension(nd5) :: ipack
 integer(kind=c_int32_t), intent(inout) :: ntotby
 integer(kind=c_int32_t), intent(inout) :: ntotrc
 integer(kind=c_int32_t), intent(out) :: ier
@@ -46,15 +46,18 @@ do while (file(i).ne.c_null_char.and.i.le.len(f_file))
 end do
 
 ! ----------------------------------------------------------------------------------------
+! Allocate and put ipack data into cpack
+! ----------------------------------------------------------------------------------------
+if(allocated(cpack))deallocate(cpack)
+allocate(cpack(TDLP_L3264W*nsta))
+do n=1,size(cpack)
+   cpack(n) = transfer(ipack(n),"    ")
+end do 
+
+! ----------------------------------------------------------------------------------------
+! Write station call letter record according to filetype.
 ! ----------------------------------------------------------------------------------------
 if(ftype.eq.1)then
-
-   if(allocated(cpack))deallocate(cpack)
-   allocate(cpack(TDLP_L3264W*nsta))
-
-   do n=1,size(cpack)
-      cpack(n) = transfer(ipack(n),"    ")
-   end do 
 
    id(1)=400001000
    id(2:4)=0
@@ -66,13 +69,13 @@ if(ftype.eq.1)then
 
 elseif(ftype.eq.2)then
 
-   nbytes=nd5*8
+   nbytes=nsta*8
    ntrash=0
 
    if(TDLP_L3264B.eq.32)then
-      write(lun,iostat=ios)ntrash,nbytes,(ipack(n),n=1,nd5)
+      write(lun,iostat=ios)ntrash,nbytes,(cpack(n),n=1,TDLP_L3264W*nsta)
    elseif(TDLP_L3264B.eq.64)then
-      write(lun,iostat=ios)nbytes,(ipack(n),n=1,nd5)
+      write(lun,iostat=ios)nbytes,(cpack(n),n=1,TDLP_L3264W*nsta)
    endif
    ier=ios
 
@@ -80,6 +83,11 @@ elseif(ftype.eq.2)then
    ntotrc=ntotrc+1
 
 endif
+
+! ----------------------------------------------------------------------------------------
+! Clean up
+! ----------------------------------------------------------------------------------------
+if(allocated(cpack))deallocate(cpack)
 
 return
 end subroutine write_station_record
