@@ -18,8 +18,8 @@ integer(kind=c_int32_t), intent(in), dimension(TDLP_IDLEN), optional :: id
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
-character(len=:), allocatable :: f_file
-integer :: n,ios,ntrash,nvalue
+character(len=TDLP_MAX_NAME) :: f_file
+integer :: i,n,ios,ntrash,nvalue
 integer, dimension(TDLP_IDLEN) :: idx
 
 ! ---------------------------------------------------------------------------------------- 
@@ -30,13 +30,15 @@ ios=0
 ntrash=0
 nvalue=0
 idx(:)=0
-
 f_file=""
-n=1
-do
-   if(file(n).eq.c_null_char)exit
-   f_file=f_file//file(n)
-   n=n+1
+
+! ----------------------------------------------------------------------------------------
+! Copy characters from C string until null terminator is found
+! ----------------------------------------------------------------------------------------
+i = 1
+do while (file(i).ne.c_null_char.and.i.le.len(f_file))
+    f_file(i:i) = transfer(file(i), f_file(i:i))
+    i=i+1
 end do
 
 ! ---------------------------------------------------------------------------------------- 

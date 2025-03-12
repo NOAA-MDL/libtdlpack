@@ -21,8 +21,7 @@ integer(kind=c_int32_t), intent(in), optional :: ncheck
 ! ----------------------------------------------------------------------------------------
 ! Local Variables
 ! ----------------------------------------------------------------------------------------
-character(len=1) :: f1
-character(len=:), allocatable :: f_file
+character(len=TDLP_MAX_NAME) :: f_file
 character(len=TDLP_NBYPWD), allocatable, dimension(:) :: cpack
 integer :: i,n,ios,nbytes,ntrash
 integer :: nreplacex, ncheckx
@@ -38,16 +37,17 @@ nreplacex=0
 ncheckx=0
 
 ! ----------------------------------------------------------------------------------------
+! Copy characters from C string until null terminator is found
+! ----------------------------------------------------------------------------------------
+i = 1
+do while (file(i).ne.c_null_char.and.i.le.len(f_file))
+    f_file(i:i) = transfer(file(i), f_file(i:i))
+    i=i+1
+end do
+
+! ----------------------------------------------------------------------------------------
 ! ----------------------------------------------------------------------------------------
 if(ftype.eq.1)then
-
-   i=1
-   do
-      if(file(i).eq.c_null_char)exit
-      f1=file(i)
-      f_file=f_file//f1
-      i=i+1
-   end do
 
    if(allocated(cpack))deallocate(cpack)
    allocate(cpack(TDLP_L3264W*nsta))

@@ -4,11 +4,12 @@ module tdlpack_mod
    implicit none
 
    ! Parameter definitions
-   integer, public, parameter :: tdlp_l3264b = storage_size(1)
-   integer, public, parameter :: tdlp_l3264w = 64 / tdlp_l3264b
-   integer, public, parameter :: tdlp_nbypwd = tdlp_l3264b / 8
-   integer, public, parameter :: tdlp_byteorder = 1 ! 1 = Big-Endian. TDLPACK files are Big-Endian.
-   integer, public, parameter :: tdlp_idlen = 4 ! Length of TDLPACK MOS-2000 Variable ID.
+   integer, public, parameter :: tdlp_l3264b = storage_size(1)  ! Size in bits of default integer.
+   integer, public, parameter :: tdlp_l3264w = 64 / tdlp_l3264b ! Number of integer words for 64-bits.
+   integer, public, parameter :: tdlp_nbypwd = tdlp_l3264b / 8  ! Number of bytes per word.
+   integer, public, parameter :: tdlp_byteorder = 1             ! 1 = Big-Endian. TDLPACK files are Big-Endian.
+   integer, public, parameter :: tdlp_idlen = 4                 ! Length of TDLPACK MOS-2000 Variable ID.
+   integer, public, parameter :: tdlp_max_name = 1024           ! Max length of TDLPACK filenames.
 
    ! Traditional MOS2K "ND"
    integer(kind=c_int32_t), public, save, bind(C,name="ND5") :: tdlp_nd5 = 20971520 / tdlp_nbypwd ! Default size 
@@ -28,6 +29,11 @@ contains
       integer(kind=c_int32_t) :: val
       val = tdlp_l3264b
    end function get_tdlp_l3264b
+
+   function get_tdlp_max_name() bind(c) result(val)
+      integer(kind=c_int32_t) :: val
+      val = tdlp_max_name
+   end function get_tdlp_max_name
 
    function get_nd7() bind(c) result(val)
       integer(kind=c_int32_t) :: val

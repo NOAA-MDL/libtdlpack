@@ -1,7 +1,6 @@
 subroutine open_tdlpack_file(file,mode,lun,ftype,ier,ra_template) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
-use tdlpack_mod
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
@@ -25,7 +24,7 @@ character(len=:), allocatable :: caction
 character(len=:), allocatable :: cstatus
 character(len=:), allocatable :: f_mode,f_ra_template
 character(len=20) :: convertx
-character(len=1024) :: f_file
+character(len=TDLP_MAX_NAME) :: f_file
 
 integer, save :: ienter=0
 integer, save :: isysend=0
@@ -34,23 +33,22 @@ integer, save :: lunx=65535
 ! ---------------------------------------------------------------------------------------- 
 ! Initialize
 ! ---------------------------------------------------------------------------------------- 
+f_file=""
 ier=0
 ios=0
 ibyteorder=0
 caccess=""
 caction="readwrite"
 cstatus=""
-f_file=repeat(" ",len(f_file))
 
 ! ---------------------------------------------------------------------------------------- 
-! Convert C char file to Fortran.
+! Copy characters from C string until null terminator is found
 ! ---------------------------------------------------------------------------------------- 
-i=1
-do
-   if(file(i).eq.c_null_char)exit
-   f_file(i:i)=file(i)
-   i=i+1
-end do 
+i = 1
+do while (file(i).ne.c_null_char.and.i.le.len(f_file))
+    f_file(i:i) = transfer(file(i), f_file(i:i))
+    i=i+1
+end do
 
 ! ---------------------------------------------------------------------------------------- 
 ! Convert C char mode to Fortran.

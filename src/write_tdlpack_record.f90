@@ -18,14 +18,15 @@ integer(kind=c_int32_t), intent(in), optional :: ncheck
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
-character(len=:), allocatable :: f_file
-integer :: n,ios,ioctet,ntrash,nsize
+character(len=TDLP_MAX_NAME) :: f_file
+integer :: i,n,ios,ioctet,ntrash,nsize
 integer :: nreplacex,ncheckx
 integer, dimension(TDLP_IDLEN) :: id
 
 ! ---------------------------------------------------------------------------------------- 
 ! Initialize
 ! ---------------------------------------------------------------------------------------- 
+f_file=""
 ier=0
 ios=0
 ioctet=nd5*TDLP_NBYPWD
@@ -37,12 +38,13 @@ id(:)=0
 
 ! FUTURE: Check for "TDLP" header
 
-f_file=""
-n=1
-do
-   if(file(n).eq.c_null_char)exit
-   f_file=f_file//file(n)
-   n=n+1
+! ----------------------------------------------------------------------------------------
+! Copy characters from C string until null terminator is found
+! ----------------------------------------------------------------------------------------
+i = 1
+do while (file(i).ne.c_null_char.and.i.le.len(f_file))
+    f_file(i:i) = transfer(file(i), f_file(i:i))
+    i=i+1
 end do
 
 ! ---------------------------------------------------------------------------------------- 
