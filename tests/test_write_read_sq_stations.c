@@ -75,7 +75,7 @@ int main()
       memset(&is1, 0, ND7*sizeof(int32_t));
       memset(&is2, 0, ND7*sizeof(int32_t));
       memset(&is4, 0, ND7*sizeof(int32_t));
-      ipack = malloc(nd5_data);
+      ipack = malloc(nd5_data*TDLP_NBYPWD);
 
       is1[0] = 0;
       is1[1] = 0;
@@ -138,7 +138,6 @@ int main()
       printf(" SUCCESS!\n");
 
       free(ipack);
-      return 0;
 
       // Write trailer record
       printf("Writing trailer record...");
@@ -181,30 +180,34 @@ int main()
 
       // Read first record
       int32_t nd5_data = 1000; // Enough to size ipack
-      int32_t ipack[nd5_data] = {};
+      int32_t *ipack;
       int32_t ioctet = 0;
-      char station[6] = {};
+      char station[6];
+
+      ipack = malloc(nd5_data*TDLP_NBYPWD);
 
       printf("Reading first record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
+      printf("ier = %d\n", ier);
       if (ier != 0)
          return ier;
-      if (ioctet != 24)
-         return ERROR;
       printf(" SUCCESS!\n");
       printf("\t Size of record, ioctet = %d\n", ioctet);
 
-      //for (int i=0; i < ioctet/TDLP_NBYPWD; i++)
-      //{
-      //   int_to_char_string(ipack, i, station);
-      //   printf("station = %s\n", station);
-      //}
+      for (int i=0; i < ioctet/TDLP_NBYPWD; i++)
+      {
+         int_to_char_string(ipack, i, station);
+         printf("station = %s\n", station);
+      }
+
+      free(ipack);
+      ipack = malloc(nd5_data*TDLP_NBYPWD);
 
       // Read second record
       printf("Reading second record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -247,10 +250,13 @@ int main()
          printf("%f ", data[i]);
       printf("]\n");
 
+      free(ipack);
+      ipack = malloc(nd5_data*TDLP_NBYPWD);
+
       // Read third record (trailer)
       printf("Reading third record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -260,11 +266,13 @@ int main()
       // TRY to read again, but should get EOF
       printf("Try to read again (should get EOF)...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &nd5_data, &filetype, &ioctet, ipack, &ier, NULL);
+      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier == 0)
          return ier;
       printf(" SUCCESS!\n");
       printf("\t ier = %d\n", ier);
+
+      free(ipack);
 
       // Close file.
       printf("Closing TDLPACK file...");

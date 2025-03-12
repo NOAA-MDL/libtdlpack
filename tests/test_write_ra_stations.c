@@ -84,7 +84,7 @@ int main()
       memset(&is1, 0, ND7*sizeof(int32_t));
       memset(&is2, 0, ND7*sizeof(int32_t));
       memset(&is4, 0, ND7*sizeof(int32_t));
-      ipack = malloc(nd5_data);
+      ipack = malloc(nd5_data*TDLP_NBYPWD);
 
       is1[0] = 0;
       is1[1] = 0;
