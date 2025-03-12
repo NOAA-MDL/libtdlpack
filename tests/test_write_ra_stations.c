@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -5,6 +6,7 @@
 #include "tdlpack.h"
 
 #define ERROR -1
+#define NCHAR 8
 
 void int_to_char_string(int32_t *ipack, int index, char *string)
 {
@@ -37,24 +39,26 @@ int main()
       // Write station call letter record.
       int32_t id[4];
       int32_t nsta=3;
-      int32_t nd5=6;
-      char stations[6][4] = {"KACY", "    ", "KBWI", "    ", "KPHL", "    "};
+      int32_t nd5=(nsta*NCHAR)/TDLP_NBYPWD;
+      char stations[3][NCHAR] = {"KACY    ", "KBWI    ", "KPHL    "};
       int32_t *ipack;
       int32_t ntotby=0;
       int32_t ntotrc=0;
       int32_t nreplace=0;
       int32_t ncheck=0;
 
+      // Put station call letter strings into ipack
+      ipack = malloc(nd5*TDLP_NBYPWD);
+      for (int i = 0; i < nsta; i++)
+      {
+         memcpy(&ipack[i*2], stations[i], NCHAR/2);
+         memcpy(&ipack[i*2+1], stations[i]+(NCHAR/2), NCHAR/2);
+      }
+
       id[0] = 400001000;
       id[1] = 0;
       id[2] = 0;
       id[3] = 0;
-
-      ipack = malloc(sizeof(stations));      
-      for (int i=0; i < nd5; i++)
-      {
-         memcpy(&ipack[i], stations[i], sizeof(int32_t));
-      }
 
       printf("Writing station call letter record...");
       ier=0;
@@ -67,15 +71,19 @@ int main()
       free(ipack);
 
       // Create data.
-      int32_t is0[ND7] = {};
-      int32_t is1[ND7] = {};
-      int32_t is2[ND7] = {};
-      int32_t is4[ND7] = {};
+      int32_t is0[ND7];
+      int32_t is1[ND7];
+      int32_t is2[ND7];
+      int32_t is4[ND7];
       int32_t nd = 3;
       float data[3] = {30.0, 33.0, 34.0};
       int32_t nd5_data = 1000;
       int32_t ioctet = 0;
 
+      memset(&is0, 0, ND7*sizeof(int32_t));
+      memset(&is1, 0, ND7*sizeof(int32_t));
+      memset(&is2, 0, ND7*sizeof(int32_t));
+      memset(&is4, 0, ND7*sizeof(int32_t));
       ipack = malloc(nd5_data);
 
       is1[0] = 0;
@@ -174,9 +182,9 @@ int main()
       // Read first record
       int32_t nd5 = 1000; // Enough to size ipack
       int32_t *ipack;
-      int32_t id[4] = {};
+      int32_t id[4];
       int32_t ioctet = 0;
-      char station[6] = {};
+      char station[6];
 
       ipack = malloc(nd5*TDLP_NBYPWD);
 
@@ -218,11 +226,17 @@ int main()
       printf("\t Size of record, ioctet = %d\n", ioctet);
 
       // Unpack the second record.
-      int32_t is0[ND7] = {};
-      int32_t is1[ND7] = {};
-      int32_t is2[ND7] = {};
-      int32_t is4[ND7] = {};
-      float data[nd5] = {};
+      int32_t is0[ND7];
+      int32_t is1[ND7];
+      int32_t is2[ND7];
+      int32_t is4[ND7];
+      float data[nd5];
+
+      memset(&is0, 0, ND7*sizeof(int32_t));
+      memset(&is1, 0, ND7*sizeof(int32_t));
+      memset(&is2, 0, ND7*sizeof(int32_t));
+      memset(&is4, 0, ND7*sizeof(int32_t));
+      memset(&data, 0, nd5*sizeof(float));
 
       printf("Unpacking the data record...");
       ier = 0;
@@ -248,6 +262,9 @@ int main()
          printf("%f ", data[i]);
       printf("]\n");
 
+      free(ipack);
+      ipack = malloc(nd5*TDLP_NBYPWD);
+
       // TRY to read again, but should get EOF
       printf("Try to read again (should get EOF)...");
       ier = 0;
@@ -257,6 +274,8 @@ int main()
          return ier;
       printf(" SUCCESS!\n");
       printf("\t ier = %d\n", ier);
+
+      free(ipack);
 
       // Close file.
       printf("Closing TDLPACK file...");

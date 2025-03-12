@@ -1,3 +1,4 @@
+#include <stddef.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -61,15 +62,19 @@ int main()
       free(ipack);
 
       // Create data.
-      int32_t is0[ND7] = {};
-      int32_t is1[ND7] = {};
-      int32_t is2[ND7] = {};
-      int32_t is4[ND7] = {};
+      int32_t is0[ND7];
+      int32_t is1[ND7];
+      int32_t is2[ND7];
+      int32_t is4[ND7];
       int32_t nd = 3;
       float data[3] = {30.0, 33.0, 34.0};
       int32_t nd5_data = 1000;
       int32_t ioctet = 0;
 
+      memset(&is0, 0, ND7*sizeof(int32_t));
+      memset(&is1, 0, ND7*sizeof(int32_t));
+      memset(&is2, 0, ND7*sizeof(int32_t));
+      memset(&is4, 0, ND7*sizeof(int32_t));
       ipack = malloc(nd5_data);
 
       is1[0] = 0;
@@ -206,11 +211,17 @@ int main()
       printf("\t Size of record, ioctet = %d\n", ioctet);
 
       // Unpack the second record.
-      int32_t is0[ND7] = {};
-      int32_t is1[ND7] = {};
-      int32_t is2[ND7] = {};
-      int32_t is4[ND7] = {};
-      float data[nd5_data] = {};
+      int32_t is0[ND7];
+      int32_t is1[ND7];
+      int32_t is2[ND7];
+      int32_t is4[ND7];
+      float data[nd5_data];
+
+      memset(&is0, 0, ND7*sizeof(int32_t));
+      memset(&is1, 0, ND7*sizeof(int32_t));
+      memset(&is2, 0, ND7*sizeof(int32_t));
+      memset(&is4, 0, ND7*sizeof(int32_t));
+      memset(&data, 0, nd5_data*sizeof(float));
 
       printf("Unpacking the data record...");
       ier = 0;
