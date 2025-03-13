@@ -1,0 +1,39 @@
+name: Build and Test on Linux
+
+on:
+  push:
+    branches:
+    - develop
+  pull_request:
+    branches:
+    - develop
+
+jobs:
+  build_linux:
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: true
+      matrix:
+        ccompiler: [clang, gcc-12]
+        
+    steps:
+  
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        path: libtdlpack
+
+    - name: build
+      run: |
+        cd libtdlpack
+        mkdir build
+        cd build
+        cmake .. 
+        make -j2 VERBOSE=1
+
+    - name: test
+      run: |
+        set -e          
+        cd $GITHUB_WORKSPACE/libtdlpack/build
+        ctest --verbose --output-on-failure --rerun-failed
+
