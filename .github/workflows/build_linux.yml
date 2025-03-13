@@ -11,10 +11,13 @@ on:
 jobs:
   build_linux:
     runs-on: ubuntu-24.04
+    env:
+      CC: gcc-${{ matrix.gcc-version }}
+      FC: gfortran-${{ matrix.gcc-version }}
     strategy:
       fail-fast: true
       matrix:
-        ccompiler: [clang, gcc-12]
+        gcc-version: [12, 13, 14]
         
     steps:
   
@@ -36,4 +39,3 @@ jobs:
         set -e          
         cd $GITHUB_WORKSPACE/libtdlpack/build
         ctest --verbose --output-on-failure --rerun-failed
-
