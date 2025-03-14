@@ -40,30 +40,59 @@ foreach(kind ${kinds})
   set_source_files_properties(${F90_SRCS} PROPERTIES 
       COMPILE_FLAGS "${CMAKE_Fortran_FLAGS} ${F90_FLAGS}")
 
-  # Build the library.
-  add_library(${lib_name} ${F77_SRCS} ${F90_SRCS})
-  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name})
+  # Build the object library. The object library will be used to
+  # static and shared libraries.
+  add_library(${lib_name}_objlib OBJECT ${F77_SRCS} ${F90_SRCS})
+  target_include_directories(${lib_name}_objlib PRIVATE ${CMAKE_CURRENT_BINARY_DIR})
+  add_library(${PROJECT_NAME}::${lib_name} ALIAS ${lib_name}_objlib)
+
+  # Build the static library.
+  if(BUILD_STATIC_LIBS)
+    add_library(${lib_name}_static STATIC $<TARGET_OBJECTS:${lib_name}_objlib>)
+    set_target_properties(${lib_name}_static PROPERTIES OUTPUT_NAME ${lib_name})
+    set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name})
+    set_target_properties(${lib_name}_static PROPERTIES EXPORT_NAME ${lib_name}_static)
+    list(APPEND LIB_TARGETS ${lib_name}_static)
+  endif()
   
   # For shared, set SOVERSION; increment it if API changes (other than
   # adding new functions).
   if(BUILD_SHARED_LIBS)
-    set_target_properties(${lib_name} PROPERTIES SOVERSION 0)
+    add_library(${lib_name}_shared SHARED $<TARGET_OBJECTS:${lib_name}_objlib>)
+    set_target_properties(${lib_name}_shared PROPERTIES OUTPUT_NAME ${lib_name})
+    set_target_properties(${lib_name}_shared PROPERTIES EXPORT_NAME ${lib_name})
+    set_target_properties(${lib_name}_shared PROPERTIES SOVERSION 0)
+    list(APPEND LIB_TARGETS ${lib_name}_shared)
   endif()
-
-  #set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${fortran_flags}")
-  set_target_properties(${lib_name} PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
-  #target_include_directories(${lib_name}
-  #  PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
-  target_include_directories(${lib_name}
-    PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include>)
 
   # Handle OpenMP.
   #if(OpenMP_Fortran_FOUND)
   #  target_link_libraries(${lib_name} PUBLIC OpenMP::OpenMP_Fortran)
   #endif()
-  
-  list(APPEND LIB_TARGETS ${lib_name})
+
+  #set_target_properties(${lib_name} PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+  set_target_properties(${lib_name}_objlib PROPERTIES COMPILE_FLAGS "${fortran_flags}")
+  set_target_properties(${lib_name}_objlib PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
+  #target_include_directories(${lib_name}
+  #  PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include_${kind}>)
+  target_include_directories(${lib_name}_objlib
+    PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include>)
+
+  if(BUILD_STATIC_LIBS)
+    set_target_properties(${lib_name}_static PROPERTIES COMPILE_FLAGS "${fortran_flags}")
+    set_target_properties(${lib_name}_static PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
+    target_include_directories(${lib_name}_static
+      PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include>)
+  endif()
+
+  if(BUILD_SHARED_LIBS)
+    set_target_properties(${lib_name}_shared PROPERTIES COMPILE_FLAGS "${fortran_flags}")
+    set_target_properties(${lib_name}_shared PROPERTIES Fortran_MODULE_DIRECTORY "${module_dir}")
+    target_include_directories(${lib_name}_shared
+      PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include>)
+  endif()
+
+#  list(APPEND LIB_TARGETS ${lib_name})
   
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
   #install(FILES tdlpack_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME tdlpack.h)

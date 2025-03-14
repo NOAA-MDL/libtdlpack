@@ -16,9 +16,9 @@ void int_to_char_string(int32_t *ipack, int index, char *string)
    string[3] = (ipack[index] >>  0) & 0xFF;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-   char name[] = "test_write_ra_stations.tdlp";
+   char *name = argv[1];
    int32_t filetype = 1; // 1 = RA
 
    printf("Test writing stations and data to a small random access file\n");

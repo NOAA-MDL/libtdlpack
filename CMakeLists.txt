@@ -32,7 +32,17 @@ endif()
 #if(NOT BUILD_4 AND NOT BUILD_8)
 #  message(FATAL_ERROR "At least one of BUILD_4 and BUILD_8 must be turned on")
 #endif()
-message(STATUS "Library kinds that will be build: ${kinds}")
+message(STATUS "Library kinds that will be built: ${kinds}")
+
+#
+set(libtypes "")
+if(BUILD_SHARED_LIBS)
+  set(libtypes ${libtypes} "shared")
+endif()
+if(BUILD_STATIC_LIBS)
+  set(libtypes ${libtypes} "static")
+endif()
+message(STATUS "Library types that will be built: ${libtypes}")
 
 # Set the build type.
 if(NOT CMAKE_BUILD_TYPE MATCHES "^(Debug|Release|RelWithDebInfo|MinSizeRel)$")
