@@ -23,6 +23,7 @@ file(GLOB F90_SRCS ${CMAKE_CURRENT_SOURCE_DIR}/*.f90)
 
 # Build _4 and/or _8 depending on options provided to CMake
 foreach(kind ${kinds})
+
   #set(lib_name ${PROJECT_NAME}_${kind})
   #set(module_dir "${CMAKE_CURRENT_BINARY_DIR}/include_${kind}")
   set(lib_name ${PROJECT_NAME})
@@ -92,11 +93,10 @@ foreach(kind ${kinds})
       PUBLIC $<BUILD_INTERFACE:${module_dir}> $<INSTALL_INTERFACE:include>)
   endif()
 
-#  list(APPEND LIB_TARGETS ${lib_name})
-  
   install(DIRECTORY ${module_dir} DESTINATION ${CMAKE_INSTALL_PREFIX})
   #install(FILES tdlpack_${kind}.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include_${kind} RENAME tdlpack.h)
   install(FILES tdlpack.h DESTINATION ${CMAKE_INSTALL_PREFIX}/include RENAME tdlpack.h)
+
 endforeach()
 
 # Install the library or libraries.
@@ -107,7 +107,7 @@ install(
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-### Package config
+# Package config
 include(CMakePackageConfigHelpers)
 set(CONFIG_INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/${PROJECT_NAME})
 
@@ -118,6 +118,7 @@ export(EXPORT ${PROJECT_NAME}Exports
 configure_package_config_file(
   ${CMAKE_SOURCE_DIR}/cmake/PackageConfig.cmake.in ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   INSTALL_DESTINATION ${CONFIG_INSTALL_DESTINATION})
+
 install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config.cmake
   DESTINATION ${CONFIG_INSTALL_DESTINATION})
 
@@ -125,6 +126,7 @@ write_basic_package_version_file(
   ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   VERSION ${PROJECT_VERSION}
   COMPATIBILITY AnyNewerVersion)
+
 install(FILES ${CMAKE_BINARY_DIR}/${PROJECT_NAME}-config-version.cmake
   DESTINATION ${CONFIG_INSTALL_DESTINATION})
 

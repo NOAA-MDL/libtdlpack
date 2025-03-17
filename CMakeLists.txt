@@ -34,7 +34,7 @@ endif()
 #endif()
 message(STATUS "Library kinds that will be built: ${kinds}")
 
-#
+# Collect types of libraries that will be built.
 set(libtypes "")
 if(BUILD_SHARED_LIBS)
   set(libtypes ${libtypes} "shared")
