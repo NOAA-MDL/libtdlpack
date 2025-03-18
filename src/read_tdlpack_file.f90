@@ -1,4 +1,4 @@
-subroutine read_tdlpack_file(file,lun,ftype,nd5,ipack,ioctet,ier,id) bind(c)
+subroutine tdlp_read_tdlpack_file(file,lun,ftype,nd5,ipack,ioctet,ier,id) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -63,4 +63,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine read_tdlpack_file
+end subroutine tdlp_read_tdlpack_file

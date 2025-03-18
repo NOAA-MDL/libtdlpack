@@ -1,4 +1,4 @@
-subroutine unpack_meta(nd5,ipack,is0,is1,is2,is4,ier) bind(c)
+subroutine tdlp_unpack_meta(nd5,ipack,is0,is1,is2,is4,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t
 implicit none
@@ -38,12 +38,12 @@ if(allocated(iwork))deallocate(iwork)
 if(allocated(data))deallocate(data)
 
 return
-end subroutine unpack_meta
+end subroutine tdlp_unpack_meta
 
 
 
 
-subroutine unpack_data(nd5,ipack,is0,is1,is2,is4,data,ier) bind(c)
+subroutine tdlp_unpack_data(nd5,ipack,is0,is1,is2,is4,data,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_float
 implicit none
@@ -79,4 +79,4 @@ call unpack(kstdout,ipack,iwork,data,nd5,&
 if(allocated(iwork))deallocate(iwork)
 
 return
-end subroutine unpack_data
+end subroutine tdlp_unpack_data

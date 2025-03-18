@@ -1,4 +1,4 @@
-subroutine pack_1d_wrapper(is0,is1,is2,is4,nd,data,nd5,ipack,ioctet,ier) bind(c)
+subroutine tdlp_pack_1d_wrapper(is0,is1,is2,is4,nd,data,nd5,ipack,ioctet,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_float
 implicit none
@@ -37,10 +37,10 @@ call pack1d(kstdout,data,ic,nd,is0,is1,is2,is4,&
 if(allocated(ic))deallocate(ic)
 
 return
-end subroutine pack_1d_wrapper
+end subroutine tdlp_pack_1d_wrapper
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-subroutine pack_2d_wrapper(is0,is1,is2,is4,nx,ny,data,nd5,ipack,ioctet,ier) bind(c)
+subroutine tdlp_pack_2d_wrapper(is0,is1,is2,is4,nx,ny,data,nd5,ipack,ioctet,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_float
 implicit none
@@ -85,4 +85,4 @@ if(allocated(ia))deallocate(ia)
 if(allocated(ic))deallocate(ic)
 
 return
-end subroutine pack_2d_wrapper
+end subroutine tdlp_pack_2d_wrapper

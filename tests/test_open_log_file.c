@@ -12,13 +12,13 @@ int main(int argc, char *argv[])
 
    char *libtype = argv[1];
    char *log = argv[2];
-   open_log_file(&unit, log); // Call with a string
+   tdlp_open_log_file(&unit, log); // Call with a string
 
    if (strcmp(libtype, "shared") == 0)
       unit2 = 49;
    if (strcmp(libtype, "static") == 0)
       unit2 = 50;
-   open_log_file(&unit2, NULL); // Call without the string (optional argument)
+   tdlp_open_log_file(&unit2, NULL); // Call without the string (optional argument)
 
    return 0;
 }
