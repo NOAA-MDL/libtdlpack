@@ -1,4 +1,4 @@
-subroutine open_tdlpack_file(file,mode,lun,ftype,ier,ra_template) bind(c)
+subroutine tdlp_open_tdlpack_file(file,mode,lun,ftype,ier,ra_template) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -144,4 +144,4 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
 endif
 
 return
-end subroutine open_tdlpack_file
+end subroutine tdlp_open_tdlpack_file

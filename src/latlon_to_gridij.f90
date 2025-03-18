@@ -1,4 +1,4 @@
-subroutine latlon_to_gridij(kstdout,mproj,xlatll,xlonll,orient,xmeshl,xlat,alat,alon,xi,yj)
+subroutine tdlp_latlon_to_gridij(kstdout,mproj,xlatll,xlonll,orient,xmeshl,xlat,alat,alon,xi,yj)
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
@@ -31,4 +31,4 @@ elseif(mproj.eq.7)then
 endif
 
 return
-end subroutine latlon_to_gridij
+end subroutine tdlp_latlon_to_gridij

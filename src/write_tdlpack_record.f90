@@ -1,4 +1,4 @@
-subroutine write_tdlpack_record(file,lun,ftype,nd5,ipack,ier,nreplace,ncheck) bind(c)
+subroutine tdlp_write_tdlpack_record(file,lun,ftype,nd5,ipack,ier,nreplace,ncheck) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -68,4 +68,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine write_tdlpack_record
+end subroutine tdlp_write_tdlpack_record

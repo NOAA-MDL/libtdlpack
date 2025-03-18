@@ -1,4 +1,4 @@
-subroutine open_log_file(log_unit,log_path) bind(c)
+subroutine tdlp_open_log_file(log_unit,log_path) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -49,4 +49,4 @@ if(ios.ne.0)then
 endif
 
 return
-end subroutine open_log_file
+end subroutine tdlp_open_log_file
