@@ -19,7 +19,7 @@ extern int32_t get_tdlp_idlen();
 extern int32_t get_tdlp_max_name();
 #define TDLP_MAX_NAME (get_tdlp_max_name())
 
-//extern int32_t ND5;
+extern int32_t ND5;
 
 extern int32_t get_nd7();
 #define ND7 (get_nd7())
