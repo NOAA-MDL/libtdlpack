@@ -141,7 +141,7 @@ int main(int argc, char *argv[])
       printf("Writing TDLPACK data record...");
       ier = 0;
       nd5_data = ioctet / TDLP_NBYPWD; // IMPORTANT: different than the original value.
-      tdlp_write_tdlpack_record(name, &lun, &filetype, &nd5_data, ipack, &ier, &nreplace, &ncheck);
+      tdlp_write_tdlpack_record(name, &lun, &filetype, &nd5_data, ipack, &ntotby, &ntotrc, &ier, &nreplace, &ncheck);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");

@@ -54,8 +54,9 @@ void tdlp_write_station_record(char *file, int32_t *lun, int32_t *ftype, int32_t
                                int32_t *ipack, int32_t *ntotby, int32_t *ntotrc, int32_t *ier,
                                int32_t *nreplace, int32_t *ncheck);
 
-void tdlp_write_tdlpack_record(char *file, int32_t *lun, int32_t *ftype, int32_t *nd5,
-                               int32_t *ipack, int32_t *ier, int32_t *nreplace, int32_t *ncheck);
+void tdlp_write_tdlpack_record(char *file, int32_t *lun, int32_t *ftype, int32_t *nd5, int32_t *ipack,
+                               int32_t *ntotby, int32_t *ntotrc, int32_t *ier, int32_t *nreplace,
+                               int32_t *ncheck);
 
 void tdlp_write_trailer_record(int32_t *lun, int32_t *ftype, int32_t *ntotby, int32_t *ntotrc, int32_t *ier);
 
