@@ -56,7 +56,7 @@ if(ftype.eq.1)then
    if(present(ncheck))ncheckx=ncheck
    id(1:4)=ipack(6:9)
    nsize=nd5
-   call wrtdlm(kstdout,lun,file,id,ipack,nsize,nreplacex,ncheckx,TDLP_L3264B,ier)
+   call wrtdlm(kstdout,lun,f_file,id,ipack,nsize,nreplacex,ncheckx,TDLP_L3264B,ier)
 elseif(ftype.eq.2)then
    ! Sequential
    if(TDLP_L3264B.eq.32)then
