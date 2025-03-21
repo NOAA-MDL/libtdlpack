@@ -28,6 +28,10 @@ extern int32_t TDLP_STDOUT_LUN;
 
 void tdlp_close_tdlpack_file(int32_t *lun, int32_t *ftype, int32_t *ier);
 
+void tdlp_gridij_to_latlon(int32_t *nx, int32_t *ny, int32_t *mproj, float *xmeshl,
+                           float *orient, float *xlat, float *xlatll, float *xlonll,
+                           float *lats, float *lons, int32_t *ier);
+
 void tdlp_open_log_file(int32_t *log_unit, char *log_path);
 
 void tdlp_open_tdlpack_file(char *file, char *mode, int32_t *lun, int32_t *ftype, int32_t *ier,
