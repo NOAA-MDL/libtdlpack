@@ -14,12 +14,12 @@ jobs:
       matrix:
         compilers: ["oneapi", "classic"]
 
+    steps:
+
     - name: "Install Intel"
       uses: NOAA-EMC/ci-install-intel-toolkit@develop
       with:
         compiler-setup: ${{ matrix.compilers }}
-
-    steps:
   
     - name: checkout
       uses: actions/checkout@v4
