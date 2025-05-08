@@ -1,5 +1,4 @@
-name: Build and Test on Linux
-
+name: Build Linux Intel
 on:
   push:
     branches:
@@ -9,16 +8,17 @@ on:
     - develop
 
 jobs:
-  build_linux:
-    runs-on: ubuntu-24.04
-    env:
-      CC: gcc-${{ matrix.gcc-version }}
-      FC: gfortran-${{ matrix.gcc-version }}
+  build_linux_intel:
+    runs-on: ubuntu-latest
     strategy:
-      fail-fast: true
       matrix:
-        gcc-version: [12, 13, 14]
-        
+        compilers: ["oneapi", "classic"]
+
+    - name: "Install Intel"
+      uses: NOAA-EMC/ci-install-intel-toolkit@develop
+      with:
+        compiler-setup: ${{ matrix.compilers }}
+
     steps:
   
     - name: checkout
