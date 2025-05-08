@@ -123,11 +123,11 @@ elseif(mode1.eq."w".or.mode1.eq."x")then
       ! Random-Access
       if(present(ra_template))then
          if(f_ra_template.eq."small")then
-            maxent=300
-            nbytes=2000
+            maxent=TDLP_RA_MAXENT_SMALL
+            nbytes=TDLP_RA_NBYTES_SMALL
          elseif(f_ra_template.eq."large")then
-            maxent=840
-            nbytes=20000
+            maxent=TDLP_RA_MAXENT_LARGE
+            nbytes=TDLP_RA_NBYTES_LARGE
          endif
          call createra(kstdout,f_file,TDLP_L3264B,lun,maxent,nbytes,ier)
       endif
