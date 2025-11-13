@@ -1,0 +1,41 @@
+name: Build Linux Intel
+on:
+  push:
+    branches:
+    - develop
+  pull_request:
+    branches:
+    - develop
+
+jobs:
+  build_linux_intel:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        compilers: ["oneapi", "classic"]
+
+    steps:
+
+    - name: "Install Intel"
+      uses: NOAA-EMC/ci-install-intel-toolkit@develop
+      with:
+        compiler-setup: ${{ matrix.compilers }}
+  
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        path: libtdlpack
+
+    - name: build
+      run: |
+        cd libtdlpack
+        mkdir build
+        cd build
+        cmake .. 
+        make -j2 VERBOSE=1
+
+    - name: test
+      run: |
+        set -e          
+        cd $GITHUB_WORKSPACE/libtdlpack/build
+        ctest --verbose --output-on-failure --rerun-failed

@@ -1,4 +1,4 @@
-subroutine write_station_record(file,lun,ftype,nsta,nd5,ipack,ntotby,ntotrc,ier,nreplace,ncheck) bind(c)
+subroutine tdlp_write_station_record(file,lun,ftype,nsta,nd5,ipack,ntotby,ntotrc,ier,nreplace,ncheck) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -90,4 +90,4 @@ endif
 if(allocated(cpack))deallocate(cpack)
 
 return
-end subroutine write_station_record
+end subroutine tdlp_write_station_record

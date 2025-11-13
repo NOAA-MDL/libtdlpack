@@ -16,9 +16,9 @@ void int_to_char_string(int32_t *ipack, int index, char *string)
    string[3] = (ipack[index] >>  0) & 0xFF;
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-   char name[] = "test_write_sq_stations.tdlp";
+   char *name = argv[1];
    int32_t filetype = 2; // 2 = SQ
 
    printf("Test writing stations and data to a sequential file\n");
@@ -29,7 +29,7 @@ int main()
 
       printf("Opening TDLPACK file for writing...");
       ier = 0;
-      open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
+      tdlp_open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -52,7 +52,7 @@ int main()
 
       printf("Writing Station call letter record...");
       ier = 0;
-      write_station_record(name, &lun, &filetype, &nsta, &nd5, ipack, &ntotby, &ntotrc, &ier, NULL, NULL);
+      tdlp_write_station_record(name, &lun, &filetype, &nsta, &nd5, ipack, &ntotby, &ntotrc, &ier, NULL, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -122,7 +122,7 @@ int main()
       // Pack data.
       printf("Packing data into TDLPACK...");
       ier = 0;
-      pack_1d_wrapper(is0, is1, is2, is4, &nd, data, &nd5_data, ipack, &ioctet, &ier);
+      tdlp_pack_1d_wrapper(is0, is1, is2, is4, &nd, data, &nd5_data, ipack, &ioctet, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -132,7 +132,7 @@ int main()
       printf("Writing TDLPACK data record...");
       ier = 0;
       nd5_data = ioctet / TDLP_NBYPWD; // IMPORTANT: different than the original value.
-      write_tdlpack_record(name, &lun, &filetype, &nd5_data, ipack, &ier, NULL, NULL);
+      tdlp_write_tdlpack_record(name, &lun, &filetype, &nd5_data, ipack, &ntotby, &ntotrc, &ier, NULL, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -142,7 +142,7 @@ int main()
       // Write trailer record
       printf("Writing trailer record...");
       ier = 0;
-      write_trailer_record(&lun, &filetype, &ntotby, &ntotrc, &ier);
+      tdlp_write_trailer_record(&lun, &filetype, &ntotby, &ntotrc, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -150,7 +150,7 @@ int main()
       // Close file.
       printf("Closing TDLPACK file...");
       ier = 0;
-      close_tdlpack_file(&lun, &filetype, &ier);
+      tdlp_close_tdlpack_file(&lun, &filetype, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -171,7 +171,7 @@ int main()
       lun = 0;
       filetype = 0;
       ier = 0;
-      open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
+      tdlp_open_tdlpack_file(name, mode, &lun, &filetype, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -188,7 +188,7 @@ int main()
 
       printf("Reading first record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
+      tdlp_read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       printf("ier = %d\n", ier);
       if (ier != 0)
          return ier;
@@ -207,7 +207,7 @@ int main()
       // Read second record
       printf("Reading second record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
+      tdlp_read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -228,7 +228,7 @@ int main()
 
       printf("Unpacking the data record...");
       ier = 0;
-      unpack_data(&nd5_data, ipack, is0, is1, is2, is4, data, &ier);
+      tdlp_unpack_data(&nd5_data, ipack, is0, is1, is2, is4, data, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -256,7 +256,7 @@ int main()
       // Read third record (trailer)
       printf("Reading third record...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
+      tdlp_read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -266,7 +266,7 @@ int main()
       // TRY to read again, but should get EOF
       printf("Try to read again (should get EOF)...");
       ier = 0;
-      read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
+      tdlp_read_tdlpack_file(name, &lun, &filetype, &nd5_data, ipack, &ioctet, &ier, NULL);
       if (ier == 0)
          return ier;
       printf(" SUCCESS!\n");
@@ -277,7 +277,7 @@ int main()
       // Close file.
       printf("Closing TDLPACK file...");
       ier = 0;
-      close_tdlpack_file(&lun, &filetype, &ier);
+      tdlp_close_tdlpack_file(&lun, &filetype, &ier);
       if (ier != 0)
          return ier;
       printf(" SUCCESS!\n");

@@ -1,4 +1,4 @@
-subroutine close_tdlpack_file(lun,ftype,ier) bind(c)
+subroutine tdlp_close_tdlpack_file(lun,ftype,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t
 implicit none
@@ -34,4 +34,4 @@ elseif(ftype.eq.2)then
 endif
 
 return
-end subroutine close_tdlpack_file
+end subroutine tdlp_close_tdlpack_file

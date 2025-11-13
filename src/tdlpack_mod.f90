@@ -10,6 +10,10 @@ module tdlpack_mod
    integer, public, parameter :: tdlp_byteorder = 1             ! 1 = Big-Endian. TDLPACK files are Big-Endian.
    integer, public, parameter :: tdlp_idlen = 4                 ! Length of TDLPACK MOS-2000 Variable ID.
    integer, public, parameter :: tdlp_max_name = 1024           ! Max length of TDLPACK filenames.
+   integer, public, parameter :: tdlp_ra_maxent_small = 300     ! RA Max Entries for "small" template.
+   integer, public, parameter :: tdlp_ra_nbytes_small = 2000    ! RA Nbytes for "small" template.
+   integer, public, parameter :: tdlp_ra_maxent_large = 840     ! RA Max Entries for "large" template.
+   integer, public, parameter :: tdlp_ra_nbytes_large = 20000   ! RA Nbytes for "large" template.
 
    ! Traditional MOS2K "ND"
    integer(kind=c_int32_t), public, save, bind(C,name="ND5") :: tdlp_nd5 = 20971520 / tdlp_nbypwd ! Default size 

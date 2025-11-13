@@ -72,32 +72,32 @@ endif()
 foreach(kind ${kinds})
   string(TOUPPER ${kind} kind_definition)
 
-  # Test open_log_file
-  add_executable(test_open_log_file test_open_log_file.c)
-  target_link_libraries(test_open_log_file PUBLIC tdlpack::tdlpack)
-  #target_compile_definitions(test_open_log_file PRIVATE "LSIZE=${kind_definition}")
-  #set_target_properties(test_open_log_file PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  add_test(test_open_log_file test_open_log_file)
+  foreach(libtype ${libtypes})
 
-  # Test open_tdlpack_file
-  add_executable(test_open_tdlpack_file test_open_tdlpack_file.c)
-  target_link_libraries(test_open_tdlpack_file PUBLIC tdlpack::tdlpack)
-  #target_compile_definitions(test_open_tdlpack_file PRIVATE "LSIZE=${kind_definition}")
-  #set_target_properties(test_open_tdlpack_file PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  add_test(test_open_tdlpack_file test_open_tdlpack_file)
+    # Test open_log_file
+    add_executable(test_open_log_file_${libtype} test_open_log_file.c)
+    target_include_directories(test_open_log_file_${libtype} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(test_open_log_file_${libtype} PRIVATE tdlpack_${libtype})
+    #target_compile_definitions(test_open_log_file PRIVATE "LSIZE=${kind_definition}")
+    #set_target_properties(test_open_log_file PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+    add_test(test_open_log_file_${libtype} test_open_log_file_${libtype} ${libtype} test_${libtype}_lib_log.txt)
 
-  # Test write_ra
-  add_executable(test_write_read_ra_stations test_write_read_ra_stations.c)
-  target_link_libraries(test_write_read_ra_stations PUBLIC tdlpack::tdlpack)
-  #target_compile_definitions(test_write_ra_stations PRIVATE "LSIZE=${kind_definition}")
-  #set_target_properties(test_write_ra_stations PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  add_test(test_write_read_ra_stations test_write_read_ra_stations)
+    # Test write_ra
+    add_executable(test_write_read_ra_stations_${libtype} test_write_read_ra_stations.c)
+    target_include_directories(test_write_read_ra_stations_${libtype} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(test_write_read_ra_stations_${libtype} PRIVATE tdlpack_${libtype})
+    #target_compile_definitions(test_write_ra_stations PRIVATE "LSIZE=${kind_definition}")
+    #set_target_properties(test_write_ra_stations PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+    add_test(test_write_read_ra_stations_${libtype} test_write_read_ra_stations_${libtype} "test_${libtype}_lib_write_ra_stations.tdlp")
 
-  # Test writing, then reading station sequential file.
-  add_executable(test_write_read_sq_stations test_write_read_sq_stations.c)
-  target_link_libraries(test_write_read_sq_stations PUBLIC tdlpack::tdlpack)
-  #target_compile_definitions(test_write_read_sq_stations PRIVATE "LSIZE=${kind_definition}")
-  #set_target_properties(test_write_read_sq_stations PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
-  add_test(test_write_read_sq_stations test_write_read_sq_stations)
+    # Test writing, then reading station sequential file.
+    add_executable(test_write_read_sq_stations_${libtype} test_write_read_sq_stations.c)
+    target_include_directories(test_write_read_sq_stations_${libtype} PUBLIC ${CMAKE_SOURCE_DIR}/include)
+    target_link_libraries(test_write_read_sq_stations_${libtype} PRIVATE tdlpack_${libtype})
+    #target_compile_definitions(test_write_read_sq_stations PRIVATE "LSIZE=${kind_definition}")
+    #set_target_properties(test_write_read_sq_stations PROPERTIES COMPILE_FLAGS "${fortran_${kind}_flags}")
+    add_test(test_write_read_sq_stations_${libtype} test_write_read_sq_stations_${libtype} "test_${libtype}_lib_write_sq_stations.tdlp")
+
+  endforeach()
 
 endforeach() # foreach(kind ${kinds})

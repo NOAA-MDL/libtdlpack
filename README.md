@@ -1,9 +1,9 @@
 # libtdlpack
 
-**libtdlpack** is a subset of Fortran subroutines from the MOS-2000 (MOS2K) software system used for reading and writing TDLPACK files.
+**libtdlpack** is a Fortran library with C-bindings and contains a subset of Fortran subroutines from the MOS-2000 (MOS2K) software system used for reading and writing TDLPACK files.
 
 >[!IMPORTANT]
->**_The primary use for this library will be to serve the [tdlpackio](https://github.com/NOAA-MDL/tdlpackio) Python package.  A handful of subroutines have been further modified to interface with C using the `ISO_C_BINDING` instrinsic module._**
+>**_The primary use for this library will be to serve the [tdlpackio](https://github.com/NOAA-MDL/tdlpackio) v2.0 Python package.  A handful of subroutines have been further modified to interface with C using the `ISO_C_BINDING` instrinsic module._**
 
 ## Introduction
 

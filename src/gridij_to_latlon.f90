@@ -1,22 +1,23 @@
-subroutine gridij_to_latlon(kstdout,nx,ny,mproj,xmeshl,orient,xlat,xlatll,xlonll,lats,&
-                            lons,ier)
+subroutine tdlp_gridij_to_latlon(nx,ny,mproj,xmeshl,orient,xlat,xlatll,xlonll,&
+                                 lats,lons,ier) bind(c)
+use tdlpack_mod
+use iso_c_binding, only: c_int32_t, c_float
 implicit none
 
 ! ---------------------------------------------------------------------------------------- 
 ! Input/Output Variables
 ! ---------------------------------------------------------------------------------------- 
-integer, intent(in) :: kstdout
-integer, intent(in) :: nx
-integer, intent(in) :: ny
-integer, intent(in) :: mproj
-real, intent(in) :: xmeshl
-real, intent(in) :: orient
-real, intent(in) :: xlat
-real, intent(in) :: xlatll
-real, intent(in) :: xlonll
-real, intent(out), dimension(nx,ny) :: lats
-real, intent(out), dimension(nx,ny) :: lons
-integer, intent(out) :: ier
+integer(kind=c_int32_t), intent(in) :: nx
+integer(kind=c_int32_t), intent(in) :: ny
+integer(kind=c_int32_t), intent(in) :: mproj
+real(kind=c_float), intent(in) :: xmeshl
+real(kind=c_float), intent(in) :: orient
+real(kind=c_float), intent(in) :: xlat
+real(kind=c_float), intent(in) :: xlatll
+real(kind=c_float), intent(in) :: xlonll
+real(kind=c_float), intent(out), dimension(nx,ny) :: lats
+real(kind=c_float), intent(out), dimension(nx,ny) :: lons
+integer(kind=c_int32_t), intent(out) :: ier
 
 ! ---------------------------------------------------------------------------------------- 
 ! Local Variables
@@ -62,4 +63,4 @@ elseif(mproj.eq.7)then
 endif
 
 return
-end subroutine gridij_to_latlon
+end subroutine tdlp_gridij_to_latlon

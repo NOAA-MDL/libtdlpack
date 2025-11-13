@@ -1,0 +1,41 @@
+name: Build macOS GNU
+
+on:
+  push:
+    branches:
+    - develop
+  pull_request:
+    branches:
+    - develop
+
+jobs:
+  build_macos_gnu:
+    runs-on: macos-latest
+    env:
+      CC: gcc-${{ matrix.gcc-version }}
+      FC: gfortran-${{ matrix.gcc-version }}
+    strategy:
+      fail-fast: true
+      matrix:
+        gcc-version: [14, 15]
+        
+    steps:
+  
+    - name: checkout
+      uses: actions/checkout@v4
+      with:
+        path: libtdlpack
+
+    - name: build
+      run: |
+        cd libtdlpack
+        mkdir build
+        cd build
+        cmake .. 
+        make -j2 VERBOSE=1
+
+    - name: test
+      run: |
+        set -e          
+        cd $GITHUB_WORKSPACE/libtdlpack/build
+        ctest --verbose --output-on-failure --rerun-failed

@@ -1,4 +1,4 @@
-subroutine write_tdlpack_record(file,lun,ftype,nd5,ipack,ier,nreplace,ncheck) bind(c)
+subroutine tdlp_write_tdlpack_record(file,lun,ftype,nd5,ipack,ntotby,ntotrc,ier,nreplace,ncheck) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t, c_char, c_null_char
 implicit none
@@ -11,6 +11,8 @@ integer(kind=c_int32_t), intent(in) :: lun
 integer(kind=c_int32_t), intent(in) :: nd5
 integer(kind=c_int32_t), intent(in) :: ftype
 integer(kind=c_int32_t), intent(in), dimension(nd5) :: ipack
+integer(kind=c_int32_t), intent(inout) :: ntotby
+integer(kind=c_int32_t), intent(inout) :: ntotrc 
 integer(kind=c_int32_t), intent(out) :: ier
 integer(kind=c_int32_t), intent(in), optional :: nreplace
 integer(kind=c_int32_t), intent(in), optional :: ncheck
@@ -19,7 +21,7 @@ integer(kind=c_int32_t), intent(in), optional :: ncheck
 ! Local Variables
 ! ---------------------------------------------------------------------------------------- 
 character(len=TDLP_MAX_NAME) :: f_file
-integer :: i,n,ios,ioctet,ntrash,nsize
+integer :: i,n,ios,ntrash
 integer :: nreplacex,ncheckx
 integer, dimension(TDLP_IDLEN) :: id
 
@@ -29,10 +31,8 @@ integer, dimension(TDLP_IDLEN) :: id
 f_file=""
 ier=0
 ios=0
-ioctet=nd5*TDLP_NBYPWD
 ncheckx=0
 nreplacex=0
-nsize=0
 ntrash=0
 id(:)=0
 
@@ -55,17 +55,12 @@ if(ftype.eq.1)then
    if(present(nreplace))nreplacex=nreplace
    if(present(ncheck))ncheckx=ncheck
    id(1:4)=ipack(6:9)
-   nsize=nd5
-   call wrtdlm(kstdout,lun,file,id,ipack,nsize,nreplacex,ncheckx,TDLP_L3264B,ier)
+   call wrtdlm(kstdout,lun,f_file,id,ipack,nd5,nreplacex,ncheckx,TDLP_L3264B,ier)
 elseif(ftype.eq.2)then
    ! Sequential
-   if(TDLP_L3264B.eq.32)then
-      write(lun,iostat=ios)ntrash,ioctet,(ipack(n),n=1,nd5)
-   elseif(TDLP_L3264B.eq.64)then
-      write(lun,iostat=ios)ioctet,(ipack(n),n=1,nd5)
-   endif
+   call writep(kstdout,lun,ipack,nd5,ntotby,ntotrc,TDLP_L3264B,ier)
    ier=ios
 endif
 
 return
-end subroutine write_tdlpack_record
+end subroutine tdlp_write_tdlpack_record

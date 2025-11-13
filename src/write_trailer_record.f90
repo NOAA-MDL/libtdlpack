@@ -1,4 +1,4 @@
-subroutine write_trailer_record(lun,ftype,ntotby,ntotrc,ier) bind(c)
+subroutine tdlp_write_trailer_record(lun,ftype,ntotby,ntotrc,ier) bind(c)
 use tdlpack_mod
 use iso_c_binding, only: c_int32_t
 implicit none
@@ -28,4 +28,4 @@ if(ftype.eq.1)return
 call trail(kstdout,lun,TDLP_L3264B,TDLP_L3264W,ntotby,ntotrc,ier)
 
 return
-end subroutine write_trailer_record
+end subroutine tdlp_write_trailer_record
