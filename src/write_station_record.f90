@@ -82,6 +82,11 @@ elseif(ftype.eq.2)then
    ntotby=ntotby+nbytes
    ntotrc=ntotrc+1
 
+   if(ier.eq.0)then
+      flush(lun,iostat=ios)
+      ier=ios
+   endif
+
 endif
 
 ! ----------------------------------------------------------------------------------------

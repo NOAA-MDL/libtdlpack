@@ -60,6 +60,10 @@ elseif(ftype.eq.2)then
    ! Sequential
    call writep(kstdout,lun,ipack,nd5,ntotby,ntotrc,TDLP_L3264B,ier)
    ier=ios
+   if(ier.eq.0)then
+      flush(lun,iostat=ios)
+      ier=ios
+   endif
 endif
 
 return
